@@ -1,11 +1,9 @@
 package apis
 
 import (
-	"fmt"
 	"testing"
 )
 
 func TestParseClusterNodes(t *testing.T) {
-	ParseClusterNodes("127.0.0.1", "7000", "")
-	fmt.Println("123")
+	ParseClusterNodes("192.168.16.56", "8001", "")
 }
