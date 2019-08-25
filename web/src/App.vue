@@ -1,29 +1,45 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+    <div id="app">
+        <SideBar/>
+        <div class="layout">
+            <transition class="transition" name="slide-fade" mode="out-in" appear>
+                <router-view/>
+            </transition>
+        </div>
     </div>
-    <router-view/>
-  </div>
 </template>
+<script>
+    import SideBar from '@/layout/SideBar'
+
+    export default {
+        components: {SideBar}
+    }
+
+</script>
 
 <style lang="scss">
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-#nav {
-  padding: 30px;
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-    &.router-link-exact-active {
-      color: #42b983;
+    @import '@/style/mixin.scss';
+    @import '@/style/reset.scss';
+    @import '@/style/element-custom.scss';
+
+    $backgroud-color: #F8FAFC;
+
+    #app {
+        background: $backgroud-color;
+        min-height: 100vh;
+        height: 100%;
+        @include slide-transition;
     }
-  }
-}
+
+    .layout {
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+        height: 100vh;
+        overflow-x: hidden;
+
+        & > div:last-child {
+            padding: 24px;
+        }
+    }
 </style>

@@ -7,9 +7,7 @@ import (
 
 func initRouter() *gin.Engine {
 	router := gin.Default()
-
-	router.GET("/api/v1/detail", GetClusterInfos)
-
+	router.POST("/api/v1/nodes", GetClusterNodes)
 	return router
 }
 

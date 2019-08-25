@@ -3,7 +3,7 @@ module.exports = {
     devServer: {
         proxy: {
             '/api/v1': {
-                target: 'https://www.easy-mock.com/mock/xxx',
+                target: 'http://127.0.0.1:8089/',
                 changeOrigin: true
             }
         }

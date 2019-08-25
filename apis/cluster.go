@@ -8,14 +8,29 @@ import (
 	"strings"
 )
 
-func GetClusterInfos(c *gin.Context) {
+func GetClusterNodes(c *gin.Context) {
+	fmt.Println(c.PostForm("host"))
+	fmt.Println(c.Request.PostForm)
+	fmt.Println(c.PostFormArray("host"))
+	fmt.Println(c.PostFormMap("host"))
+	fmt.Println(c.Request.Header)
+	buf := make([]byte, 1024)
+	n,_ := c.Request.Body.Read(buf)
+	fmt.Println(string(buf[0:n]))
+
+	fmt.Println(c.JSON)
+
+
 
 	host := "10.211.55.12"
 	port := "8001"
 	password := ""
+
 	nodes := ParseClusterNodes(host, port, password)
-	n, _ := c.Writer.WriteString(nodes)
-	fmt.Println(n)
+	_, err := c.Writer.WriteString(nodes)
+	if err != nil {
+		fmt.Println("response write failed,err: ", err)
+	}
 }
 
 func ParseClusterNodes(host, port, password string) string {
@@ -36,7 +51,7 @@ func ParseClusterNodes(host, port, password string) string {
 		nodes = append(nodes, nl)
 	}
 	data, _ := json.Marshal(nodes)
-	fmt.Println(string(data))
+	//fmt.Println(string(data))
 	return string(data)
 }
 
