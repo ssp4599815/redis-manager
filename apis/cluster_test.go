@@ -5,5 +5,5 @@ import (
 )
 
 func TestParseClusterNodes(t *testing.T) {
-	ParseClusterNodes("192.168.16.56", "8001", "")
+	ParseClusterNodes("10.211.55.12", "8001", "")
 }

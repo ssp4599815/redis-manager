@@ -1,28 +1,24 @@
 package apis
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis"
-	"net/http"
 	"strings"
 )
 
 func GetClusterInfos(c *gin.Context) {
 
-	host := "192.168.16.56"
+	host := "10.211.55.12"
 	port := "8001"
 	password := ""
 	nodes := ParseClusterNodes(host, port, password)
-	fmt.Println(nodes)
-	c.JSON(http.StatusOK, gin.H{
-		"status":  http.StatusOK,
-		"message": "get cluster info successful",
-		"data":    nodes,
-	})
+	n, _ := c.Writer.WriteString(nodes)
+	fmt.Println(n)
 }
 
-func ParseClusterNodes(host, port, password string) map[string]node {
+func ParseClusterNodes(host, port, password string) string {
 	addr := strings.Join([]string{host, port}, ":")
 	client := redis.NewClusterClient(&redis.ClusterOptions{
 		Addrs:    []string{addr},
@@ -30,35 +26,29 @@ func ParseClusterNodes(host, port, password string) map[string]node {
 	})
 	response := client.ClusterNodes()
 	rawLines := response.Val()
+	nodes := make([]map[string]interface{}, 0)
 
-	nodes := make(map[string]node)
 	for _, line := range strings.Split(rawLines, "\n") {
 		if len(line) == 0 { // 跳过空行
 			continue
 		}
 		nl := parseNodeLine(line)
-		nodes[nl.addr] = nl
+		nodes = append(nodes, nl)
 	}
-	return nodes
+	data, _ := json.Marshal(nodes)
+	fmt.Println(string(data))
+	return string(data)
 }
 
-type node struct {
-	nodeId    string
-	addr      string
-	flags     string
-	masterId  string
-	connected bool
-}
-
-func parseNodeLine(line string) node {
-	var n node
+func parseNodeLine(line string) map[string]interface{} {
+	node := make(map[string]interface{})
 	lineItmes := strings.Split(line, " ")
-	n.nodeId = lineItmes[0]
-	n.addr = parseAddr(lineItmes[1])
-	n.flags = parseFlags(lineItmes[2])
-	n.masterId = parseMasterId(lineItmes[3])
-	n.connected = parseConnected(lineItmes[7])
-	return n
+	node["NodeId"] = lineItmes[0]
+	node["Addr"] = parseAddr(lineItmes[1])
+	node["Flags"] = parseFlags(lineItmes[2])
+	node["MasterId"] = parseMasterId(lineItmes[3])
+	node["Connected"] = parseConnected(lineItmes[7])
+	return node
 }
 func parseAddr(addr string) string {
 	addr = strings.Split(addr, "@")[0]
