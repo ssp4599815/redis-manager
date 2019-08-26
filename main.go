@@ -1,17 +1,11 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
-	. "github.com/ssp4599815/redis-manager/apis"
+	"github.com/ssp4599815/redis-manager/db"
 )
 
-func initRouter() *gin.Engine {
-	router := gin.Default()
-	router.POST("/api/v1/nodes", GetClusterNodes)
-	return router
-}
-
 func main() {
+	defer db.SqlDB.Close()
 	r := initRouter()
 	r.Run(":8089")
 }

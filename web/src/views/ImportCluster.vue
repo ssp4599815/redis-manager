@@ -25,8 +25,31 @@
                     <el-input v-model="importForm.password"></el-input>
                 </el-form-item>
 
+                <el-form-item v-if="tableShow">
+                    <el-table
+                            :data="NodesData"
+                            stripe
+                            :default-sort="{prop: 'Addr', order: 'ascending'}"
+                            style="width: 100%">
+                        <el-table-column
+                                prop="Addr"
+                                label="Addr"
+                                width="180">
+                        </el-table-column>
+                        <el-table-column
+                                prop="Flags"
+                                label="Flags"
+                                width="180">
+                        </el-table-column>
+                        <el-table-column
+                                prop="Connected"
+                                label="Connected">
+                        </el-table-column>
+                    </el-table>
+                </el-form-item>
+
                 <el-form-item class="footer-item">
-                    <el-button @click="checkForm('importForm')">验证</el-button>
+                    <el-button @click="checkForm('importForm')" :disabled="checkDisabled">验证</el-button>
                     <el-button type="primary" @click="submitForm('importForm')" :disabled="submitDisabled">导入
                     </el-button>
                 </el-form-item>
@@ -63,7 +86,10 @@
                     port: "8001",
                     password: '',
                 },
-                submitDisabled: false,
+                NodesData: [],
+                tableShow: false,  // 不显示表格
+                checkDisabled: false,
+                submitDisabled: true,
             }
         },
         created() {
@@ -77,14 +103,17 @@
                         return false
                     }
                 });
-
             },
             async onCheck() {
                 let params = JSON.parse(JSON.stringify(this.importForm));
-                console.log(params);
                 try {
-                    await getClusterNodesApi(params);
-                    this.$message.success("获取集群节点信息中，请等待")
+                    const {data} = await getClusterNodesApi(params);
+                    this.NodesData = data.data;
+
+                    this.tableShow = true;
+                    this.submitDisabled = false;
+
+                    this.$message.success(data.message)
                 } catch ({error}) {
                     this.$message.error(`获取失败：${error}`)
                 }
