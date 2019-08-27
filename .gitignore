@@ -13,3 +13,6 @@
 
 # 忽略 node_modules
 web/node_modules
+
+# 忽略 .idea
+.idea
