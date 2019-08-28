@@ -1,6 +1,8 @@
 package rdb
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestDump(t *testing.T) {
 	Dump()
