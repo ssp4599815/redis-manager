@@ -7,12 +7,12 @@ import (
 
 // Entry is info of a redis recored
 type Entry struct {
-	Key                string
-	Bytes              uint64
-	Type               string
-	NumOfElem          uint64
-	LenOfLargestElem   uint64
-	FieldOfLargestElem string
+	Key                string // key 名
+	Bytes              uint64 // value 的大小
+	Type               string // key 的类型
+	NumOfElem          uint64 // value 中元素的个数
+	LenOfLargestElem   uint64 // 最长元素的长度
+	FieldOfLargestElem string // 最长元素的名称
 }
 
 // Decoder decode rdb file
