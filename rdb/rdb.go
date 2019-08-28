@@ -59,7 +59,7 @@ func getData(cnt *Counter) map[string]interface{} {
 	}
 
 	data["TotalNum"] = totalNum
-	data["TotalType"] = totalBytes
+	data["TotalBytes"] = totalBytes
 
 	lenLevelCount := map[string][]*PrefixEntry{}
 	for _, entry := range cnt.GetLenLevelCount() {
