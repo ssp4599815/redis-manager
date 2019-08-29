@@ -3,7 +3,9 @@ package rdb
 import (
 	"bufio"
 	"bytes"
+	"encoding/json"
 	"fmt"
+	"github.com/dongmx/rdb"
 	"io"
 	"net"
 	"strconv"
@@ -88,15 +90,14 @@ func (inst *Instance) sync() (err error) {
 	// because rdb was transformed by RESP Bulk String, we need ignore first line
 	// 忽略第一行的解析数据
 	/*
-	执行命令： PSYNC ? -1
-	+FULLRESYNC d3c009753b7dc26efbf1b6b04e63a93bcfbfb4b1 0
-	$206
-	REDIS0009�	redis-ver5.0.0�
-	...
+		执行命令： PSYNC ? -1
+		+FULLRESYNC d3c009753b7dc26efbf1b6b04e63a93bcfbfb4b1 0
+		$206
+		REDIS0009�	redis-ver5.0.0�
+		...
 	*/
 	for {
 		data, err = inst.br.ReadBytes(byteLF) // 读取到换行符
-		fmt.Printf(string(data))
 		if err != nil {
 			return
 		}
@@ -110,17 +111,23 @@ func (inst *Instance) sync() (err error) {
 	}
 
 	// read full rdb
-	err = inst.syncRDB(inst.Target)
+	//err = inst.syncRDB(inst.Target)
 
-	for {
-		data, err = inst.br.ReadBytes(byteLF) // 读取到换行符
-		fmt.Printf(string(data))
-		time.Sleep(time.Second)
-	}
+	//for {
+	//	data, err = inst.br.ReadBytes(byteLF) // 读取到换行符
+	//	fmt.Printf(string(data))
+	//	time.Sleep(time.Second)
+	//}
+	decoder := NewDecoder()
+	err = rdb.Decode(inst.br, decoder)
+	cnt := NewCounter()
+	cnt.Count(decoder.Entries)
+	saa := GetData(cnt)
+	jsonBytes, _ := json.MarshalIndent(saa, "", "    ")
+	fmt.Println(string(jsonBytes))
 
 	return
 }
-
 
 func (inst *Instance) parsePSyncReply(data []byte) error {
 	fmt.Printf("receive paync data %s reply as %s\n", inst.Addr, strconv.Quote(string(data)))

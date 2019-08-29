@@ -27,12 +27,12 @@ func Dump() {
 	go decode(decoder, path.Join(baseDir, "rdb.rdb"))
 	cnt := NewCounter()
 	cnt.Count(decoder.Entries)
-	data := getData(cnt)
+	data := GetData(cnt)
 	jsonBytes, _ := json.MarshalIndent(data, "", "    ")
 	fmt.Println(string(jsonBytes))
 }
 
-func getData(cnt *Counter) map[string]interface{} {
+func GetData(cnt *Counter) map[string]interface{} {
 	data := make(map[string]interface{})
 	data["LargestKeys"] = cnt.GetLargestEntries(100)
 
