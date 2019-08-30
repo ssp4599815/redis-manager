@@ -21,17 +21,6 @@ func decode(decoder *Decoder, filepath string) {
 	}
 }
 
-func Dump() {
-	decoder := NewDecoder()
-	baseDir, _ := os.Getwd()
-	go decode(decoder, path.Join(baseDir, "rdb.rdb"))
-	cnt := NewCounter()
-	cnt.Count(decoder.Entries)
-	data := GetData(cnt)
-	jsonBytes, _ := json.MarshalIndent(data, "", "    ")
-	fmt.Println(string(jsonBytes))
-}
-
 func GetData(cnt *Counter) map[string]interface{} {
 	data := make(map[string]interface{})
 	data["LargestKeys"] = cnt.GetLargestEntries(100)
@@ -67,4 +56,25 @@ func GetData(cnt *Counter) map[string]interface{} {
 	}
 	data["LenLevelCount"] = lenLevelCount
 	return data
+}
+
+func Dump() {
+	decoder := NewDecoder()
+	baseDir, _ := os.Getwd()
+	go decode(decoder, path.Join(baseDir, "rdb.rdb"))
+	cnt := NewCounter()
+	cnt.Count(decoder.Entries)
+	data := GetData(cnt)
+	jsonBytes, _ := json.MarshalIndent(data, "", "    ")
+	fmt.Println(string(jsonBytes))
+}
+
+// Realtime 实时计算
+func Realtime()  {
+	
+}
+
+// Offline 离线计算
+func Offline()  {
+
 }
